@@ -2,11 +2,16 @@
 
 ## Logic
 
-- We use **Dynamic Programming (DP)** and calculate the maximum possible profit by iterating backwards through the timeline.
-- At each position in the DP array, we check all available properties and choose the one that gives the maximum profit.
-- The calculated profit is combined with the future profit stored at the corresponding position in the DP array.
-- This process continues backwards, so each position holds the maximum profit achievable from that point onwards.
-- Finally, **`dp[0]` gives the maximum possible profit for the entire given timeline.**
+- We use **Dynamic Programming (DP)** to calculate the maximum possible profit.
+- We start from the end of the timeline and move backwards.
+- At each position, we check every property to see whether its construction time fits within the remaining timeline.
+- We calculate the profit for each valid property by adding:
+  - The income earned after the property is completed.
+  - The maximum profit possible from the remaining timeline.
+- We select the property that gives the highest profit and store all properties that give the same maximum profit.
+- After calculating the DP values, we use the stored choices to find all possible combinations that achieve the maximum profit.
+- We use a `Map` to remove duplicate combinations.
+- Finally, **`dp[0]` gives the maximum possible profit for the entire timeline**, and the combinations list contains the different optimal property selections.
 
 ## How to Run
 

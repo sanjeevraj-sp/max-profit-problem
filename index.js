@@ -1,6 +1,7 @@
-function maxProfit(n, prop) {
+function maxProfit(n, properties) {
+
   const dp = Array(n + 1).fill(0);
-  const choice = Array(n + 1).fill(-1);
+  const choice = Array.from({ length: n + 1 }, () => []);
 
   for (let curr = n - 1; curr >= 0; curr--) {
     for (let prop = 0; prop < properties.length; prop++) {
@@ -12,24 +13,45 @@ function maxProfit(n, prop) {
 
         if (earnings > dp[curr]) {
           dp[curr] = earnings;
-          choice[curr] = prop;
+          choice[curr] = [prop];
+        }
+        else if (earnings === dp[curr] && earnings > 0) {
+          choice[curr].push(prop);
         }
       }
     }
   }
 
-  const result = { T: 0, P: 0, C: 0 };
-  let curr = 0;
+  const combinations = new Map();
 
-  while (choice[curr] !== -1) {
-    const property = properties[choice[curr]];
+  function findCombinations(curr, result) {
 
-    result[property.name]++;
-    curr += property.time;
+    if (choice[curr].length === 0) {
+      const key = `${result.T},${result.P},${result.C}`;
+      combinations.set(key, {
+        T: result.T,
+        P: result.P,
+        C: result.C
+      });
+      return;
+    }
+
+    for (const prop of choice[curr]) {
+
+      const property = properties[prop];
+
+      result[property.name]++;
+
+      findCombinations(curr + property.time, result);
+
+      result[property.name]--;
+    }
   }
 
-  console.log(`Profit: $${dp[0]}`);
-  console.log(`T: ${result.T} P: ${result.P} C: ${result.C}`);
+  findCombinations(0, { T: 0, P: 0, C: 0 });
+
+  console.log("Max Earnings:", dp[0]);
+  console.log("Valid Combinations:", [...combinations.values()]);
 }
 
 const properties = [
@@ -38,4 +60,4 @@ const properties = [
     { name: "C", time: 10, rate: 2000 }
 ];
 
-maxProfit( 13, properties ); // 16500
+maxProfit( 7, properties );
